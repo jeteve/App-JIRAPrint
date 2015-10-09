@@ -2,3 +2,4 @@
 .cse.*
 App-JIRAPrint-*
 .jiraprint.conf
+texput.*

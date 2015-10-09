@@ -196,7 +196,15 @@ sub _build_shared_directory{
 
 sub _build_tt{
     my ($self) = @_;
-    return Template->new();
+    return Template->new({
+        STRICT => 1,
+        FILTERS => {
+            tex => sub{
+                my ($text) = @_;
+                return LaTeX::Encode::latex_encode($text);
+            }
+        }
+    });
 }
 
 
@@ -209,13 +217,10 @@ Processes $this->template_file() with the $this->fetch_issues() and return a str
 sub process_template{
     my ($self) = @_;
     my $stash = $self->fetch_issues();
-    $stash->{tex} = sub{
-        LateX::Encode::latex_encode($_);
-    };
 
     my $fio = IO::File->new($self->template_file(), "r");
     my $output = '';
-    $self->tt()->process( $fio , $stash , \$output );
+    $self->tt()->process( $fio , $stash , \$output ) || die $self->tt()->error();
     return $output;
 }
 

@@ -19,4 +19,3 @@ $j->config();
 
 binmode STDOUT, 'utf8';
 print $j->process_template();
-

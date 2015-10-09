@@ -12,9 +12,8 @@ ok( $j->jira() , "Ok got jira client");
 
 {
     my $jira = Test::MockModule->new('JIRA::REST');
-    $jira->mock( POST =>  sub{ return { issues => [  { foo => 1 , bar => 'a' , key => 'whatever' } ] } ; } );
-    ok( $j->fetch_issues() , "Ok got issues");
-    diag( $j->process_template() );
+    $jira->mock( POST =>  sub{ return { issues => [  { foo => 1 , bar => 'a' , key => 'whatever', fields => { summary => 'blablaHAHAHA' } } ] } ; } );
+    like( $j->process_template() , qr /blablaHAHAHA/);
 }
 
 done_testing();

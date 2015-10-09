@@ -39,9 +39,8 @@
 \begin{document}
 \sffamily
 
-
 [% FOREACH issue IN issues %]
-  \vcardfront{[% issue.key %]}{[% issue.fields.summary %]}{[% issue.url %]}
+  \vcardfront{[% issue.key FILTER tex %]}{[% issue.fields.summary FILTER tex %]}{[% issue.url FILTER tex %]}
 [% END %]
 
 \end{document}
