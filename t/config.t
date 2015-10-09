@@ -15,6 +15,19 @@ use App::JIRAPrint;
     is( $j->config_place() , 'in memory config' );
 }
 
+{
+    my $j = App::JIRAPrint->new({ config_files => [ 't/fullconfig.conf' ]});
+    ok( $j->config() );
+    ok( $j->url() );
+    ok( $j->username() );
+    ok( $j->password() );
+    ok( $j->project() );
+    ok( $j->sprint() );
+    ok( $j->jql() );
+    is_deeply( $j->fields() , [ 'a', 'b' ]);
+    is( $j->maxissues() , 314 );
+}
+
 
 done_testing();
 
