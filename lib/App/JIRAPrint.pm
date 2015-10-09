@@ -8,13 +8,25 @@ use Log::Any qw/$log/;
 
 App::JIRAPrint - Print JIRA Tickets on post it sheets
 
+=head1 INSTALLATION
+
+  cpan -i App::JIRAPrint
+
+Or
+
+  cpanm App::JIRAPrint
+
+=head1 SYNOPSIS
+
+  jiraprint
+
 =cut
 
 use autodie qw/:all/;
 use Cwd;
+use Data::Dumper;
 use File::Spec;
 use Hash::Merge;
-
 use JIRA::REST;
 
 
@@ -29,8 +41,10 @@ has 'password' => ( is => 'ro', isa => 'Str' , lazy_build => 1);
 
 has 'project' => ( is => 'ro', isa => 'Str' , lazy_build => 1 );
 has 'sprint'  => ( is => 'ro', isa => 'Str' , lazy_build => 1 );
+has 'maxissues' => ( is => 'ro', isa => 'Int' , lazy_build => 1);
 
 has 'jql' => ( is => 'ro', isa => 'Str', lazy_build => 1);
+has 'fields' => ( is => 'ro', isa => 'ArrayRef[Str]', lazy_build => 1 );
 
 # Objects
 has 'jira' => ( is => 'ro', isa => 'JIRA::REST', lazy_build => 1);
@@ -41,6 +55,15 @@ sub _build_jira{
     return JIRA::REST->new( $self->url() , $self->username() , $self->password() );
 }
 
+sub _build_fields{
+    my ($self) = @_;
+    return $self->config()->{fields} // [ qw/key status summary assignee/ ];
+}
+
+sub _build_maxissues{
+    my ($self) = @_;
+    return $self->config()->{maxissues} // 50;
+}
 
 sub _build_url{
     my ($self) = @_;
@@ -118,5 +141,46 @@ sub _build_config_files{
     return \@files;
 }
 
+=head2 fetch_fields
+
+Returns the list of available fiels at this (url, username, password, project)
+
+Usage:
+
+ my $fields = $this->fetch_fields();
+
+=cut
+
+sub fetch_fields{
+    my ($self) = @_;
+    return $self->jira->GET('/field');
+}
+
+=head2 fetch_issues
+
+Fetches issues from JIRA Using this object properties (url, username, password, project, maxissues, fields)
+
+Usage:
+
+ my $issues = $this->fetch_issues();
+
+=cut
+
+sub fetch_issues{
+    my ($self) = @_;
+    my $issues = $self->jira()->POST('/search', undef , {
+        jql => $self->jql(),
+        startAt => 0,
+        maxResults => $self->maxissues(),
+        fields => $self->fields()
+    });
+
+    $log->debug(&{
+        (sub{
+             return "Issues ".( Data::Dumper->new([ $issues ])->Indent(0)->Terse(1)->Deparse(1)->Sortkeys(1)->Dump );
+         })
+    }() ) if $log->is_debug();
+    return $issues;
+}
 
 1;

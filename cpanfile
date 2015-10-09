@@ -3,3 +3,5 @@ requires 'Hash::Merge' , '>= 0.200';
 requires 'Log::Any', '>= 1.032';
 
 test_requires 'Test::More' , '>= 1.001014';
+test_requires 'Test::MockModule' , '>= 0.10';
+
