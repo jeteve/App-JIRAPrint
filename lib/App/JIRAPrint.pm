@@ -28,11 +28,27 @@ use Data::Dumper;
 use File::Spec;
 use Hash::Merge;
 use JIRA::REST;
+use LaTeX::Encode;
+use Template;
+
+BEGIN{
+    # The test compatible File::Share
+    eval{ require File::Share; File::Share->import('dist_dir'); };
+    if( $@ ){
+        # The production only File::ShareDir
+        require File::ShareDir;
+        File::ShareDir->import('dist_dir');
+    }
+};
 
 
 # Config stuff.
 has 'config' => ( is => 'ro', isa => 'HashRef', lazy_build => 1);
 has 'config_files' => ( is => 'ro' , isa => 'ArrayRef[Str]' , lazy_build => 1);
+
+has 'shared_directory' => ( is => 'ro', isa => 'Str', lazy_build => 1);
+has 'template_file' => ( is => 'ro', isa => 'Str', lazy_build => 1);
+
 
 # Operation properties
 has 'url' => ( is => 'ro', isa => 'Str', lazy_build => 1 );
@@ -48,6 +64,8 @@ has 'fields' => ( is => 'ro', isa => 'ArrayRef[Str]', lazy_build => 1 );
 
 # Objects
 has 'jira' => ( is => 'ro', isa => 'JIRA::REST', lazy_build => 1);
+
+has 'tt' => ( is => 'ro', isa => 'Template', lazy_build => 1);
 
 sub _build_jira{
     my ($self) = @_;
@@ -96,6 +114,12 @@ sub _build_jql{
         'project = "'.$self->project().'" and Sprint = "'.$self->sprint().'" ORDER BY status, assignee, created'
 }
 
+sub _build_template_file{
+    my ($self) = @_;
+    return $self->config()->{template_file} //
+        File::Spec->catfile( $self->shared_directory() , 'std_tickets.tex.tt' );
+}
+
 sub config_place{
     my ($self) = @_;
     if( $self->has_config_files() && @{ $self->config_files() } ){
@@ -141,6 +165,60 @@ sub _build_config_files{
     return \@files;
 }
 
+sub _build_shared_directory{
+    my ($self) = @_;
+    my $file_based_dir = File::Spec->rel2abs(__FILE__);
+    $file_based_dir =~ s|lib/App/JIRAPrint.+||;
+    $file_based_dir .= 'share/';
+    if( -d $file_based_dir ){
+        my $real_sharedir = Cwd::realpath($file_based_dir);
+        unless( $real_sharedir ){
+            confess("Could not build Cwd::realpath from '$file_based_dir'");
+        }
+        $real_sharedir .= '/';
+
+        $log->debug("Will use file based shared directory '$real_sharedir'");
+        return $real_sharedir;
+    }
+
+    my $dist_based_dir = Cwd::realpath(dist_dir('App-JIRAPrint'));
+
+    my $real_sharedir = Cwd::realpath($dist_based_dir);
+    unless( $real_sharedir ){
+        confess("Could not build Cwd::realpath from '$dist_based_dir'");
+    }
+
+    $real_sharedir .= '/';
+
+    $log->debug("Will use  directory ".$real_sharedir);
+    return $real_sharedir;
+}
+
+sub _build_tt{
+    my ($self) = @_;
+    return Template->new();
+}
+
+
+=head2 process_template
+
+Processes $this->template_file() with the $this->fetch_issues() and return a string
+
+=cut
+
+sub process_template{
+    my ($self) = @_;
+    my $stash = $self->fetch_issues();
+    $stash->{tex} = sub{
+        LateX::Encode::latex_encode($_);
+    };
+
+    my $fio = IO::File->new($self->template_file(), "r");
+    my $output = '';
+    $self->tt()->process( $fio , $stash , \$output );
+    return $output;
+}
+
 =head2 fetch_fields
 
 Returns the list of available fiels at this (url, username, password, project)
@@ -180,6 +258,9 @@ sub fetch_issues{
              return "Issues ".( Data::Dumper->new([ $issues ])->Indent(0)->Terse(1)->Deparse(1)->Sortkeys(1)->Dump );
          })
     }() ) if $log->is_debug();
+    foreach my $issue ( @{$issues->{issues}} ){
+        $issue->{url} = $self->url().'/browse/'.$issue->{key};
+    }
     return $issues;
 }
 

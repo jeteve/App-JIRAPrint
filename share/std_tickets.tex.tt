@@ -1,0 +1,47 @@
+%
+% 6 Postits per A4 sheet
+%
+\documentclass[a4paper,10pt]{letter}
+\usepackage[a4paper,landscape,margin=0cm]{geometry}
+
+% load ticket.sty with the appropriate ticket definition
+\usepackage[crossmark]{ticket}
+\unitlength=1mm
+\ticketNumbers{3}{2}
+\ticketSize{76}{76} % in unitlength
+\ticketDistance{10}{10} % in unitlength
+
+
+% load misc stuff
+\usepackage{graphicx}
+\usepackage{color}
+
+% make your default ticket. \ticketdefault is somewhat like a background
+% here it is empty, because we use different tickets for the front an
+% the back of our card
+\renewcommand{\ticketdefault}{%
+}
+
+% now what do you like to put in your ticket
+\newcommand{\vcardfront}[3]{\ticket{%
+    
+    \put(5,70){
+      \begin{minipage}[t][70mm][t]{60mm}%
+        {\bfseries\large#1}\\[2ex]
+        {\large#2}
+        \vfill
+                                                      {\bfseries#3}\hfill{\bfseries#4}
+      \end{minipage}
+    }
+  }
+}
+
+\begin{document}
+\sffamily
+
+
+[% FOREACH issue IN issues %]
+  \vcardfront{[% issue.key %]}{[% issue.fields.summary %]}{[% issue.url %]}
+[% END %]
+
+\end{document}
