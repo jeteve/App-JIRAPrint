@@ -5,3 +5,14 @@ use lib 'lib';
 
 use strict;
 use warnings;
+
+use Log::Any::Adapter;
+
+Log::Any::Adapter->set('Stdout', log_level => 'info' );
+
+use App::JIRAPrint;
+
+my $j = App::JIRAPrint->new();
+
+# Force config loading
+$j->config();
