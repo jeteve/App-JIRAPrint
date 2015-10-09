@@ -1,0 +1,7 @@
+#! /usr/bin/env perl -w
+#-*- mode: Perl -*-
+
+use lib 'lib';
+
+use strict;
+use warnings;
