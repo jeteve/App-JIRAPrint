@@ -22,6 +22,10 @@ Or in your favourite cpan minus place:
 
   jiraprint --help
 
+=head1 BUILDING
+
+=for HTML <a href="https://travis-ci.org/jeteve/App-JIRAPrint"><img src="https://travis-ci.org/jeteve/App-JIRAPrint.svg?branch=master"></a>
+
 =cut
 
 use autodie qw/:all/;

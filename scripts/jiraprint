@@ -164,4 +164,10 @@ The username to connect as to pull the tickets. Mandatory in the config file(s) 
 
 =back
 
+=head1 ABOUT
+
+Copyright Jerome Eteve 2015- jerome dot eteve at a well known email provider with a name that starts with 'g'.
+
+=for HTML <a href="https://travis-ci.org/jeteve/App-JIRAPrint"><img src="https://travis-ci.org/jeteve/App-JIRAPrint.svg?branch=master"></a>
+
 =cut
