@@ -18,7 +18,6 @@
 \ticketSize{76}{76} % in unitlength
 \ticketDistance{15}{15} % in unitlength
 
-
 % load misc stuff
 \usepackage{graphicx}
 \usepackage{color}

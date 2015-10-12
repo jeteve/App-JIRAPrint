@@ -131,8 +131,8 @@ sub config_place{
 sub _build_config{
     my ($self) = @_;
     my $config = {};
-    my $merge = Hash::Merge->new( 'RETAINMENT_PRECEDENT' );
-    foreach my $config_file ( reverse @{$self->config_files} ){
+    my $merge = Hash::Merge->new( 'RIGHT_PRECEDENT' );
+    foreach my $config_file ( @{$self->config_files} ){
         $log->info("Loading $config_file");
         my $file_config =  do $config_file ;
         unless( $file_config ){
@@ -147,9 +147,9 @@ sub _build_config{
 sub _build_config_files{
     my ($self) = @_;
     my @candidates = (
-        File::Spec->catfile( getcwd() , '.jiraprint.conf' ),
+        File::Spec->catfile( '/' , 'etc' , 'jiraprint.conf' ),
         File::Spec->catfile( $ENV{HOME} , '.jiraprint.conf' ),
-        File::Spec->catfile( '/' , 'etc' , 'jiraprint.conf' )
+        File::Spec->catfile( getcwd() , '.jiraprint.conf' ),
       );
     my @files = ();
     foreach my $candidate ( @candidates ){
