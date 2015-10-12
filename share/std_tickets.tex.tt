@@ -41,7 +41,7 @@
         
         \hrulefill
         
-        #2
+        \textsc{ {\LARGE #2} }
         
       \end{minipage}
     }
