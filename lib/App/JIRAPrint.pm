@@ -6,19 +6,21 @@ use Log::Any qw/$log/;
 
 =head1 NAME
 
-App::JIRAPrint - Print JIRA Tickets on post it sheets
+App::JIRAPrint - Print JIRA Tickets on PostIt sheets
 
 =head1 INSTALLATION
 
+On system perl:
+
   cpan -i App::JIRAPrint
 
-Or
+Or in your favourite cpan minus place:
 
   cpanm App::JIRAPrint
 
 =head1 SYNOPSIS
 
-  jiraprint
+  jiraprint --help
 
 =cut
 
