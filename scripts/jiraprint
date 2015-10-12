@@ -88,7 +88,7 @@ jiraprint - Generate printable XeTeX code to print JIRA tickets on Postits
 
 This is a standard Perl package. Install on system perl:
 
-  cpan -i App::JIRAPrint
+  sudo cpan -i App::JIRAPrint
 
 Or in your cpanminus favorite destination:
 
@@ -139,7 +139,9 @@ project can be specified in a config file, but overriden by the command line swi
 
 Note that each level (going from /etc/, to $HOME, to $PWD) will override the precedent level.
 
-This allows you to define things (like project) at project, user or global level.
+This allows you to define properties (like project) at project, user or global level. A typical setup is to define your project specific stuff
+in your project directory, your personnal login details in your C<$HOME/.jiraprint.conf> and the organisation wide URL at machine level (in /etc/jiraprint.conf).
+
 
 =head1 OPTIONS
 
