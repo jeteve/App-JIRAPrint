@@ -12,7 +12,9 @@ ok( $j->jira() , "Ok got jira client");
 
 {
     my $jira = Test::MockModule->new('JIRA::REST');
-    $jira->mock( POST =>  sub{ return { issues => [  { foo => 1 , bar => 'a' , key => 'whatever', fields => { summary => 'blablaHAHAHA' } } ] } ; } );
+    $jira->mock( POST =>  sub{ return { issues => [  { foo => 1 , bar => 'a' , key => 'whatever', fields => { summary => 'blablaHAHAHA',
+                                                                                                              issuetype => { name => 'Story' }
+                                                                                                          } } ] } ; } );
     like( $j->process_template() , qr /blablaHAHAHA/);
 }
 
