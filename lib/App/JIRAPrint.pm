@@ -4,6 +4,8 @@ package App::JIRAPrint;
 use Moose;
 use Log::Any qw/$log/;
 
+use WWW::Shorten 'TinyURL', ':short';
+
 =head1 NAME
 
 App::JIRAPrint - Print JIRA Tickets on PostIt sheets
@@ -81,7 +83,7 @@ sub _build_jira{
 
 sub _build_fields{
     my ($self) = @_;
-    return $self->config()->{fields} // [ qw/key status summary assignee/ ];
+    return $self->config()->{fields} // [ qw/key status summary assignee issuetype/ ];
 }
 
 sub _build_maxissues{
@@ -266,11 +268,11 @@ sub fetch_issues{
 
     $log->debug(&{
         (sub{
-             return "Issues ".( Data::Dumper->new([ $issues ])->Indent(0)->Terse(1)->Deparse(1)->Sortkeys(1)->Dump );
+             return "Issues ".( Data::Dumper->new([ $issues ])->Indent(1)->Terse(1)->Deparse(1)->Sortkeys(1)->Dump );
          })
     }() ) if $log->is_debug();
     foreach my $issue ( @{$issues->{issues}} ){
-        $issue->{url} = $self->url().'/browse/'.$issue->{key};
+        $issue->{url} = short_link($self->url().'/browse/'.$issue->{key});
     }
     return $issues;
 }

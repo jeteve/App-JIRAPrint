@@ -8,6 +8,7 @@ requires 'IPC::System::Simple';
 requires 'Template', '>= 2.26';
 requires 'Pod::Usage' , '>= 1.67';
 requires 'Moose', '>= 2.1405';
+requires 'WWW::Shorten', '>= 3.06';
 
 test_requires 'Test::More' , '>= 1.001014';
 test_requires 'Test::MockModule' , '>= 0.10';

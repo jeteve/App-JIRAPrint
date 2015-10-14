@@ -4,23 +4,28 @@
 %
 %%%%
 % use the corresponding paper size for your ticket definition
-\documentclass[a4paper,landscape,10pt]{letter}
-\usepackage[a4paper,margin=1in,landscape]{geometry}
+\documentclass[10pt]{letter}
+\usepackage[a4paper,margin=0in]{geometry}
 
-\usepackage[T1]{fontenc}
+
+\usepackage{fontspec}
 \usepackage{textcomp}
+
+\setmainfont{Arial Black}
 
 % load ticket.sty with the appropriate ticket definition
 \usepackage[crossmark]{ticket}
 
 \unitlength=1mm
-\ticketNumbers{3}{2}
+\ticketNumbers{2}{3}
 \ticketSize{76}{76} % in unitlength
 \ticketDistance{15}{15} % in unitlength
 
 % load misc stuff
 \usepackage{graphicx}
 \usepackage{color}
+
+\usepackage{pst-barcode}
 
 % define something
 \definecolor{uni}{rgb}{.3019,.7216,.7019}
@@ -33,20 +38,23 @@
 
 % now what do you like to put in your ticket
 \newcommand{\vcardfront}[5]{\ticket{%
-%    \put(5,70){\bfseries\Large #1}
     \put(3,70){
       \begin{minipage}[t]{70mm}
-        {\bfseries\Large #1}
+        {\bfseries\Large #1}\hfill{#4}
         
         \hrulefill
-        
-        {\Large \scshape #2}
+
+        \begin{flushleft}
+        {\huge #2}
+        \end{flushleft}
         
       \end{minipage}
     }
-    \put(3,3){\small #3}
-    \put(70,3){\small #4}
-    \put( 7,16){\small #5}
+    \put(3,3){
+      \begin{pspicture}(2cm,2cm)  
+        \psbarcode{#3}{}{qrcode}
+      \end{pspicture}
+    }
 }}
 
 
@@ -54,6 +62,6 @@
 \sffamily
 % ten cards for the front
 [% FOREACH issue IN issues %]
-\vcardfront{[% issue.key %]}{[% issue.fields.summary FILTER tex %]}{[% issue.key FILTER tex %]}{12}
+\vcardfront{[% issue.key %]}{[% issue.fields.summary FILTER tex %]}{[% issue.url FILTER tex %]}{[% issue.fields.issuetype.name FILTER tex %]}
 [% END %]
 \end{document}

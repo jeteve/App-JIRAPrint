@@ -34,7 +34,7 @@ GetOptions(
 );
 
 if( $verbose ){
-    Log::Any::Adapter->set('Stdout' , log_level => 'trace' );
+    Log::Any::Adapter->set('Stderr' , log_level => 'trace' );
 }
 
 if( $help ){
