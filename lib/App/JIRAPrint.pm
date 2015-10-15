@@ -88,7 +88,7 @@ sub _build_fields{
 
 sub _build_maxissues{
     my ($self) = @_;
-    return $self->config()->{maxissues} // 50;
+    return $self->config()->{maxissues} // 100;
 }
 
 sub _build_url{
